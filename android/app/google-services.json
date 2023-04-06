@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "691534500503",
+    "project_id": "addmental-7a646",
+    "storage_bucket": "addmental-7a646.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:691534500503:android:d49ed07a07676c8592cfd2",
+        "android_client_info": {
+          "package_name": "com.example.addmental"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "691534500503-pd56o3mfh4a1iecn86r8gusdg5op456e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmfJTjkWwJBxkiktAITYT8f0Rli3ACIzA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "691534500503-pd56o3mfh4a1iecn86r8gusdg5op456e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
