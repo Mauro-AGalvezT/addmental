@@ -18,7 +18,7 @@ class _HomeViewState extends State<HomeView> {
         children: [
           const SizedBox(height: 20),
           const Text('Estamos para ayudarte',
-              textAlign: TextAlign.start,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -52,6 +52,7 @@ class _HomeViewState extends State<HomeView> {
                         'assets/images/image1.jpg',
                         width: 180,
                         height: 180,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -79,6 +80,7 @@ class _HomeViewState extends State<HomeView> {
                         'assets/images/image2.jpg',
                         width: 230,
                         height: 170,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
