@@ -1,6 +1,5 @@
-import 'package:addmental/ui/views/home_view.dart';
-import 'package:addmental/ui/views/login_view.dart';
-import 'package:addmental/ui/views/main_view.dart';
+import 'package:addmental/ui/login_page.dart';
+import 'package:addmental/ui/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -24,13 +23,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: MainView.id,
+      initialRoute: MainPage.id,
       routes: {
-        LoginView.id: (_) => const LoginView(),
+        LoginPage.id: (_) => const LoginPage(),
       },
-      home: const MainView(),
+      home: const MainPage(),
     );
   }
 }
-
-  

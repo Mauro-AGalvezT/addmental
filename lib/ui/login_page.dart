@@ -1,17 +1,16 @@
-import 'package:addmental/ui/views/register_view.dart';
+import 'package:addmental/ui/register_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
-class LoginView extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   static String id = "login_view";
-  const LoginView({Key? key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _LoginViewState();
+  State<StatefulWidget> createState() => _LoginPageState();
 }
 
-class _LoginViewState extends State<LoginView> {
+class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -95,7 +94,7 @@ class _LoginViewState extends State<LoginView> {
                   onPressed: () {
                     signIn();
                   },
-                  child: Text('Ingresar')),
+                  child: const Text('Ingresar')),
             ),
           ),
           TextButton(
@@ -111,7 +110,7 @@ class _LoginViewState extends State<LoginView> {
                 context,
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                      const RegisterView(),
+                      const RegisterPage(),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                     return child;
