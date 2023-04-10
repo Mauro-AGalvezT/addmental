@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:addmental/model/user.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -9,16 +12,17 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _formRegisterKey = GlobalKey<FormState>();
-  final TextEditingController _dateBirth = TextEditingController();
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  //final Usuario _user = Usuario();
+  final _formStepOneKey = GlobalKey<FormState>();
+  final _formStepTwoKey = GlobalKey<FormState>();
+  final _formStepThreeKey = GlobalKey<FormState>();
+  final TextEditingController _birthDate = TextEditingController();
   final TextEditingController _names = TextEditingController();
   final TextEditingController _surnames = TextEditingController();
-  bool _canContinue = false;
-  bool _isFormValid() {
-    return _names.text.isNotEmpty &&
-        _surnames.text.isNotEmpty &&
-        _dateBirth.text.isNotEmpty;
-  }
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  bool _obscureText = true;
 
   List<Step> stepList() => [
         Step(
@@ -27,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
             isActive: _activeStepIndex >= 0,
             title: const Text('PASO 1'),
             content: Form(
-              key: _formRegisterKey,
+              key: _formStepOneKey,
               child: Column(children: [
                 const Text('Datos personales',
                     textAlign: TextAlign.start,
@@ -43,11 +47,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       return '*Campo requerido.';
                     }
                     return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      _canContinue = _isFormValid();
-                    });
                   },
                   decoration: InputDecoration(
                       icon: const Icon(Icons.person_outline_sharp),
@@ -65,11 +64,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     }
                     return null;
                   },
-                  onChanged: (value) {
-                    setState(() {
-                      _canContinue = _isFormValid();
-                    });
-                  },
                   decoration: InputDecoration(
                       icon: const Icon(Icons.person_outline_sharp),
                       hintText: 'Apellidos',
@@ -79,17 +73,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  controller: _dateBirth,
+                  controller: _birthDate,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '*Campo requerido.';
                     }
                     return null;
-                  },
-                  onChanged: (value) {
-                    setState(() {
-                      _canContinue = _isFormValid();
-                    });
                   },
                   decoration: InputDecoration(
                       icon: const Icon(Icons.date_range),
@@ -106,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     );
                     if (pickDate != null) {
                       setState(() {
-                        _dateBirth.text =
+                        _birthDate.text =
                             DateFormat('dd/MM/yyyy').format(pickDate);
                       });
                     }
@@ -119,53 +108,90 @@ class _RegisterPageState extends State<RegisterPage> {
           state: _activeStepIndex <= 1 ? StepState.editing : StepState.complete,
           isActive: _activeStepIndex >= 1,
           title: const Text('PASO 2'),
-          content: Column(children: const [
-            Text('¿Cual es tu correo electrónico?',
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                )),
-            SizedBox(height: 20),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25.0),
-              child: TextField(
-                //controller: _emailController,
+          content: Form(
+            key: _formStepTwoKey,
+            child: Column(children: [
+              const Text('¿Cual es tu correo electrónico?',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  )),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _email,
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '*Campo requerido.';
+                  }
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                      .hasMatch(value)) {
+                    return 'Por favor, introduce un correo electrónico válido.';
+                  }
+                  return null;
+                },
                 decoration: InputDecoration(
-                  hintText: 'Correo',
-                  hintStyle: TextStyle(color: Colors.grey),
-                ),
+                    icon: const Icon(Icons.email_outlined),
+                    hintText: 'Correo electrónico',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10))),
               ),
-            ),
-            SizedBox(height: 20),
-          ]),
+              const SizedBox(height: 20),
+            ]),
+          ),
         ),
         Step(
           state: _activeStepIndex <= 2 ? StepState.editing : StepState.complete,
           isActive: _activeStepIndex >= 2,
           title: const Text('PASO 3'),
-          content: Column(children: const [
-            Text('Crea tu contraseña',
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                )),
-            SizedBox(height: 20),
-            Text('Debe contener al menos 6 caracteres.'),
-            SizedBox(height: 20),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 25.0),
-              child: TextField(
-                //controller: _emailController,
-                decoration: InputDecoration(
-                  hintText: 'Contraseña',
-                  hintStyle: TextStyle(color: Colors.grey),
-                ),
+          content: Form(
+            key: _formStepThreeKey,
+            child: Column(children: [
+              const Text('Crea tu contraseña',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  )),
+              const SizedBox(height: 20),
+              const Text(
+                'Debe contener al menos 6 caracteres.',
+                textAlign: TextAlign.right,
               ),
-            ),
-            SizedBox(height: 20),
-          ]),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _password,
+                obscureText: _obscureText,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '*Campo requerido.';
+                  }
+                  if (value.length < 6) {
+                    return '*Contraseña invalida.';
+                  }
+                  return null;
+                },
+                decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText ? Icons.visibility : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                    ),
+                    hintText: 'Contraseña',
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10))),
+              ),
+              const SizedBox(height: 20),
+            ]),
+          ),
         )
       ];
   int _activeStepIndex = 0;
@@ -202,18 +228,37 @@ class _RegisterPageState extends State<RegisterPage> {
         steps: stepList(),
         type: StepperType.horizontal,
         currentStep: _activeStepIndex,
-        onStepContinue: _canContinue
-            ? () {
-                if (_activeStepIndex < (stepList().length - 1)) {
-                  _activeStepIndex += 1;
-                }
-                setState(() {
-                  if (_activeStepIndex == 0 && !_isFormValid()) {
+        onStepContinue: () {
+          setState(() {
+            if (_activeStepIndex < (stepList().length)) {
+              switch (_activeStepIndex) {
+                case 0:
+                  if (!_formStepOneKey.currentState!.validate()) {
                     return;
+                  } else {
+                    _activeStepIndex += 1;
                   }
-                });
+                  break;
+                case 1:
+                  if (!_formStepTwoKey.currentState!.validate()) {
+                    return;
+                  } else {
+                    _activeStepIndex += 1;
+                  }
+                  break;
+                case 2:
+                  if (!_formStepThreeKey.currentState!.validate()) {
+                    return;
+                  } else {
+                    registerUser();
+                  }
+                  break;
+                default:
+                  return;
               }
-            : null,
+            }
+          });
+        },
         onStepCancel: () {
           if (_activeStepIndex == 0) {
             return;
@@ -223,5 +268,56 @@ class _RegisterPageState extends State<RegisterPage> {
         },
       ),
     );
+  }
+
+  // ignore: non_constant_identifier_names
+  Usuario setUser() {
+    return Usuario(
+        name: _names.text.trim(),
+        surname: _surnames.text.trim(),
+        email: _email.text.trim(),
+        birthDate: _birthDate.text.trim());
+  }
+
+  void registerUser() async {
+    try {
+      var user = setUser();
+      await db.collection('users').doc().set({
+        'name': user.name,
+        'surname': user.surname,
+        'email': user.email,
+        'birthDate': user.birthDate,
+      });
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _email.text.trim(),
+        password: _password.text.trim(),
+      );
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Usuario registrado.'),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('La contraseña es demasiada corta.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Ya existe una cuenta con ese correo.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }
