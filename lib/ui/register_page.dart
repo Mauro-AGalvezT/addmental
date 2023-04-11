@@ -1,3 +1,4 @@
+import 'package:addmental/ui/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   bool _obscureText = true;
+  bool _isChecked = false;
 
   List<Step> stepList() => [
         Step(
@@ -102,6 +104,23 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                 ),
                 const SizedBox(height: 20),
+                SizedBox(
+                  width: 160,
+                  height: 60,
+                  child: GestureDetector(
+                    //onTap: signIn,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          _showDialog(context);
+                        },
+                        child: const Text(
+                          'Políticas de privacidad \nY\n Términos de servicio',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12),
+                        )),
+                  ),
+                ),
+                const SizedBox(height: 40),
               ]),
             )),
         Step(
@@ -206,66 +225,84 @@ class _RegisterPageState extends State<RegisterPage> {
         centerTitle: true,
         foregroundColor: Colors.black,
       ),
-      body: Stepper(
-        controlsBuilder:
-            (BuildContext context, ControlsDetails controlsDetails) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: controlsDetails.onStepContinue,
-                child: const Text('Continuar'),
-              ),
-              const SizedBox(width: 10),
-              TextButton(
-                onPressed: controlsDetails.onStepCancel,
-                child: const Text('Cancelar',
-                    style: TextStyle(color: Colors.grey)),
-              ),
-            ],
-          );
-        },
-        steps: stepList(),
-        type: StepperType.horizontal,
-        currentStep: _activeStepIndex,
-        onStepContinue: () {
-          setState(() {
-            if (_activeStepIndex < (stepList().length)) {
-              switch (_activeStepIndex) {
-                case 0:
-                  if (!_formStepOneKey.currentState!.validate()) {
-                    return;
-                  } else {
-                    _activeStepIndex += 1;
+      body: Column(
+        children: [
+          Expanded(
+            child: Stepper(
+              controlsBuilder:
+                  (BuildContext context, ControlsDetails controlsDetails) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ElevatedButton(
+                      onPressed: controlsDetails.onStepContinue,
+                      child: const Text('Continuar'),
+                    ),
+                    const SizedBox(width: 10),
+                    TextButton(
+                      onPressed: controlsDetails.onStepCancel,
+                      child: const Text('Cancelar',
+                          style: TextStyle(color: Colors.grey)),
+                    ),
+                  ],
+                );
+              },
+              steps: stepList(),
+              type: StepperType.horizontal,
+              currentStep: _activeStepIndex,
+              onStepContinue: () {
+                setState(() {
+                  if (_activeStepIndex < (stepList().length)) {
+                    switch (_activeStepIndex) {
+                      case 0:
+                        if (!_formStepOneKey.currentState!.validate() ||
+                            _isChecked == false) {
+                          if (_isChecked == false) {
+                            setState(() {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text('Debes aceptar los terminos y condiciones.'),
+                                  duration: Duration(seconds: 2),
+                                ));
+                              });
+                            });
+                          }
+                          return;
+                        } else {
+                          _activeStepIndex += 1;
+                        }
+                        break;
+                      case 1:
+                        if (!_formStepTwoKey.currentState!.validate()) {
+                          return;
+                        } else {
+                          _activeStepIndex += 1;
+                        }
+                        break;
+                      case 2:
+                        if (!_formStepThreeKey.currentState!.validate()) {
+                          return;
+                        } else {
+                          registerUser();
+                        }
+                        break;
+                      default:
+                        return;
+                    }
                   }
-                  break;
-                case 1:
-                  if (!_formStepTwoKey.currentState!.validate()) {
-                    return;
-                  } else {
-                    _activeStepIndex += 1;
-                  }
-                  break;
-                case 2:
-                  if (!_formStepThreeKey.currentState!.validate()) {
-                    return;
-                  } else {
-                    registerUser();
-                  }
-                  break;
-                default:
+                });
+              },
+              onStepCancel: () {
+                if (_activeStepIndex == 0) {
                   return;
-              }
-            }
-          });
-        },
-        onStepCancel: () {
-          if (_activeStepIndex == 0) {
-            return;
-          }
-          _activeStepIndex -= 1;
-          setState(() {});
-        },
+                }
+                _activeStepIndex -= 1;
+                setState(() {});
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -282,22 +319,29 @@ class _RegisterPageState extends State<RegisterPage> {
   void registerUser() async {
     try {
       var user = setUser();
-      await db.collection('users').doc().set({
+      var userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _email.text.trim(),
+        password: _password.text.trim(),
+      );
+      final String uid = userCredential.user!.uid;
+      
+      await db.collection('users').doc(uid).set({
         'name': user.name,
         'surname': user.surname,
         'email': user.email,
         'birthDate': user.birthDate,
       });
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: _email.text.trim(),
-        password: _password.text.trim(),
-      );
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Usuario registrado.'),
         ),
       );
+      // ignore: use_build_context_synchronously
+      Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -319,5 +363,75 @@ class _RegisterPageState extends State<RegisterPage> {
     } catch (e) {
       print(e);
     }
+  }
+
+  void _showDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'Póliticas de privacidad',
+            textAlign: TextAlign.center,
+          ),
+          content: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  height: 350,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Container(
+                      padding: const EdgeInsets.all(10.0),
+                      child: const Text(
+                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque libero ac sapien eleifend, eget tincidunt augue iaculis. Sed tincidunt turpis sed venenatis vestibulum. Sed ac magna ut lacus bibendum iaculis. Integer accumsan malesuada velit, sed laoreet enim bibendum id. Nunc ut nisi ipsum. Maecenas nec mi euismod, imperdiet arcu at, finibus augue. Aliquam erat volutpat. Sed tincidunt eget augue vitae sollicitudin. Pellentesque sed metus vel velit sollicitudin commodo. Nulla malesuada euismod elit in interdum. Pellentesque commodo tincidunt felis eget pharetra. Sed porttitor imperdiet augue euismod lobortis. Nam auctor orci vitae elit bibendum, eu malesuada sapien sagittis.' +
+                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque libero ac sapien eleifend, eget tincidunt augue iaculis. Sed tincidunt turpis sed venenatis vestibulum. Sed ac magna ut lacus bibendum iaculis. Integer accumsan malesuada velit, sed laoreet enim bibendum id. Nunc ut nisi ipsum. Maecenas nec mi euismod, imperdiet arcu at, finibus augue. Aliquam erat volutpat. Sed tincidunt eget augue vitae sollicitudin. Pellentesque sed metus vel velit sollicitudin commodo. Nulla malesuada euismod elit in interdum. Pellentesque commodo tincidunt felis eget pharetra. Sed porttitor imperdiet augue euismod lobortis. Nam auctor orci vitae elit bibendum, eu malesuada sapien sagittis.',
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ),
+                ),
+                CheckboxListTile(
+                  title: const Text(
+                    'Aceptar nuestras Políticas de privacidad y términos de servicio',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontSize: 10),
+                  ),
+                  value: _isChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _isChecked = value ?? false;
+                    });
+                  },
+                ),
+              ],
+            );
+          }),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                setState(() {
+                  _isChecked = false;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Aceptar'),
+              onPressed: () {
+                setState(() {
+                  _isChecked = _isChecked;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
