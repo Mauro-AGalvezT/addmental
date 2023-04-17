@@ -1,6 +1,9 @@
+import 'package:addmental/ui/views/tests/anxiety_view.dart';
+import 'package:addmental/ui/views/tests/depression_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+
 
 class TestView extends StatefulWidget {
   const TestView({super.key});
@@ -47,11 +50,27 @@ class _TestViewState extends State<TestView> {
                           ),
                         ],
                       ),
-                      child: Image.asset(
-                        'assets/images/image3.jpg',
-                        width: 180,
-                        height: 180,
-                        fit: BoxFit.cover,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                      DepressionView(),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                return child;
+                              },
+                            ),
+                          );
+                        },
+                        child: Image.asset(
+                          'assets/images/image3.jpg',
+                          width: 180,
+                          height: 180,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
@@ -75,11 +94,27 @@ class _TestViewState extends State<TestView> {
                           ),
                         ],
                       ),
-                      child: Image.asset(
-                        'assets/images/image4.jpg',
-                        width: 230,
-                        height: 170,
-                        fit: BoxFit.cover,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) =>
+                                       AnxietyView(),
+                              transitionsBuilder: (context, animation,
+                                  secondaryAnimation, child) {
+                                return child;
+                              },
+                            ),
+                          );
+                        },
+                        child: Image.asset(
+                          'assets/images/image4.jpg',
+                          width: 230,
+                          height: 170,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),

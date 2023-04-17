@@ -334,7 +334,7 @@ class _RegisterPageState extends State<RegisterPage> {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Usuario registrado.'),
+          content: Text('Usuario registrado exitosamente.'),
         ),
       );
       // ignore: use_build_context_synchronously
