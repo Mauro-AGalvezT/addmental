@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
-  final screens = [const TestView(), const HomeView(), const ResultView()];
+  final screens = [const TestView(), const HomeView(),  const ResultView()];
 
   @override
   Widget build(BuildContext context) {

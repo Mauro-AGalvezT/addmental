@@ -1,5 +1,7 @@
 import 'package:addmental/ui/login_page.dart';
 import 'package:addmental/ui/main_page.dart';
+import 'package:addmental/ui/views/result_view.dart';
+import 'package:addmental/ui/views/tests/anxiety_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -26,6 +28,7 @@ class MyApp extends StatelessWidget {
       initialRoute: MainPage.id,
       routes: {
         LoginPage.id: (_) => const LoginPage(),
+        ResultView.id: (_) => const ResultView(),
       },
       home: const MainPage(),
     );

@@ -195,17 +195,17 @@ class ResultPage extends StatelessWidget {
               //onTap: signIn,
               child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const ResultView(),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) {
-                          return child;
-                        },
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   PageRouteBuilder(
+                    //     pageBuilder: (context, animation, secondaryAnimation) =>
+                    //         const ResultView(),
+                    //     transitionsBuilder:
+                    //         (context, animation, secondaryAnimation, child) {
+                    //       return child;
+                    //     },
+                    //   ),
+                    // );
                   },
                   child: const Text('Ver resultados')),
             ),

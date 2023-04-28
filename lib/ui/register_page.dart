@@ -1,3 +1,4 @@
+import 'package:addmental/ui/home_page.dart';
 import 'package:addmental/ui/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -103,23 +104,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     }
                   },
                 ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: 160,
-                  height: 60,
-                  child: GestureDetector(
-                    //onTap: signIn,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          _showDialog(context);
-                        },
-                        child: const Text(
-                          'Políticas de privacidad \nY\n Términos de servicio',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 12),
-                        )),
-                  ),
-                ),
                 const SizedBox(height: 40),
               ]),
             )),
@@ -209,6 +193,23 @@ class _RegisterPageState extends State<RegisterPage> {
                         borderRadius: BorderRadius.circular(10))),
               ),
               const SizedBox(height: 20),
+              SizedBox(
+                width: 160,
+                height: 60,
+                child: GestureDetector(
+                  //onTap: signIn,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        _showDialog(context);
+                      },
+                      child: const Text(
+                        'Políticas de privacidad \nY\n Términos de servicio',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 12),
+                      )),
+                ),
+              ),
+              const SizedBox(height: 20),
             ]),
           ),
         )
@@ -255,19 +256,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   if (_activeStepIndex < (stepList().length)) {
                     switch (_activeStepIndex) {
                       case 0:
-                        if (!_formStepOneKey.currentState!.validate() ||
-                            _isChecked == false) {
-                          if (_isChecked == false) {
-                            setState(() {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(const SnackBar(
-                                  content: Text('Debes aceptar los terminos y condiciones.'),
-                                  duration: Duration(seconds: 2),
-                                ));
-                              });
-                            });
-                          }
+                        if (!_formStepOneKey.currentState!.validate()) {
                           return;
                         } else {
                           _activeStepIndex += 1;
@@ -281,7 +270,20 @@ class _RegisterPageState extends State<RegisterPage> {
                         }
                         break;
                       case 2:
-                        if (!_formStepThreeKey.currentState!.validate()) {
+                        if (!_formStepThreeKey.currentState!.validate() ||
+                            _isChecked == false) {
+                          if (_isChecked == false) {
+                            setState(() {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text(
+                                      'Debes aceptar los terminos y condiciones.'),
+                                  duration: Duration(seconds: 2),
+                                ));
+                              });
+                            });
+                          }
                           return;
                         } else {
                           registerUser();
@@ -319,12 +321,13 @@ class _RegisterPageState extends State<RegisterPage> {
   void registerUser() async {
     try {
       var user = setUser();
-      var userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      var userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _email.text.trim(),
         password: _password.text.trim(),
       );
       final String uid = userCredential.user!.uid;
-      
+
       await db.collection('users').doc(uid).set({
         'name': user.name,
         'surname': user.surname,
@@ -339,9 +342,9 @@ class _RegisterPageState extends State<RegisterPage> {
       );
       // ignore: use_build_context_synchronously
       Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-    );
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -386,8 +389,33 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Container(
                       padding: const EdgeInsets.all(10.0),
                       child: const Text(
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque libero ac sapien eleifend, eget tincidunt augue iaculis. Sed tincidunt turpis sed venenatis vestibulum. Sed ac magna ut lacus bibendum iaculis. Integer accumsan malesuada velit, sed laoreet enim bibendum id. Nunc ut nisi ipsum. Maecenas nec mi euismod, imperdiet arcu at, finibus augue. Aliquam erat volutpat. Sed tincidunt eget augue vitae sollicitudin. Pellentesque sed metus vel velit sollicitudin commodo. Nulla malesuada euismod elit in interdum. Pellentesque commodo tincidunt felis eget pharetra. Sed porttitor imperdiet augue euismod lobortis. Nam auctor orci vitae elit bibendum, eu malesuada sapien sagittis.' +
-                            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pellentesque libero ac sapien eleifend, eget tincidunt augue iaculis. Sed tincidunt turpis sed venenatis vestibulum. Sed ac magna ut lacus bibendum iaculis. Integer accumsan malesuada velit, sed laoreet enim bibendum id. Nunc ut nisi ipsum. Maecenas nec mi euismod, imperdiet arcu at, finibus augue. Aliquam erat volutpat. Sed tincidunt eget augue vitae sollicitudin. Pellentesque sed metus vel velit sollicitudin commodo. Nulla malesuada euismod elit in interdum. Pellentesque commodo tincidunt felis eget pharetra. Sed porttitor imperdiet augue euismod lobortis. Nam auctor orci vitae elit bibendum, eu malesuada sapien sagittis.',
+                        ' Políticas de Privacidad de "ADDMENTAL"\n' +
+                            '1.	Introducción' +
+                            'Esta política de privacidad describe cómo la aplicación móvil " ADDMENTAL " recopila y utiliza la información personal de los usuarios de la aplicación. Al utilizar la aplicación, el usuario acepta las prácticas descritas en esta política de privacidad.' +
+                            '\n' +
+                            '2.	Información que recopilamos' +
+                            'La Aplicación puede recopilar información personal del usuario, incluyendo:\n' +
+                            '•	Información de contacto, como nombre y dirección de correo electrónico.\n' +
+                            '•	Información demográfica, como edad, género y ubicación geográfica.\n' +
+                            '•	Información de salud, como los síntomas de depresión y ansiedad que el usuario experimenta.\n' +
+                            '•	Además, la aplicación puede recopilar información no personal sobre el uso de la aplicación, incluyendo datos de uso, registros de errores y otros datos de diagnóstico. Esta información se utiliza para mejorar la calidad de la aplicación y el servicio que ofrecemos.' +
+                            '\n' +
+                            '3.	Uso de la información' +
+                            'La aplicación utiliza la información personal del usuario para los siguientes fines:\n' +
+                            '•	Proporcionar un diagnóstico de depresión y ansiedad.\n' +
+                            '•	Proporcionar información personalizada y consejos sobre la gestión de la depresión y ansiedad.\n' +
+                            '•	Mejorar la calidad de la Aplicación y el servicio que ofrecemos.\n' +
+                            '•	Enviar información sobre actualizaciones de la aplicación o nuevos servicios que puedan ser de interés para el usuario.\n' +
+                            '•	La aplicación no vende ni comparte la información personal del usuario con terceros sin el consentimiento explícito del usuario.' +
+                            '\n' +
+                            '4.	Seguridad de la información\n' +
+                            'La aplicación se compromete a proteger la información personal del usuario y utiliza medidas de seguridad razonables para proteger la información de accesos no autorizados o uso indebido. Sin embargo, ninguna medida de seguridad es completamente infalible y la aplicación no puede garantizar la seguridad completa de la información del usuario.' +
+                            '\n' +
+                            '5.	Cambios a esta política de privacidad\n' +
+                            'La aplicación puede actualizar esta política de privacidad de vez en cuando. En caso de cambios significativos en las prácticas de privacidad de la aplicación, se informará al usuario mediante una notificación dentro de la aplicación o mediante correo electrónico.' +
+                            '\n' +
+                            '6.	Contacto\n' +
+                            'Si el usuario tiene alguna pregunta o inquietud s0obre esta política de privacidad o el uso de la aplicación, puede ponerse en contacto con nosotros en cualquier momento mediante el correo electrónico proporcionado en la aplicación.',
                         textAlign: TextAlign.justify,
                         style: TextStyle(fontSize: 14),
                       ),

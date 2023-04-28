@@ -31,7 +31,7 @@ class QuesionWidget extends StatefulWidget {
 
 class _QuestionWidgetState extends State<QuesionWidget> {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  late PageController _controller;
+  late PageController _controller;  
   int _questionNumber = 1;
   int _score = 0;
   List<int> scoreQuestion = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -88,22 +88,20 @@ class _QuestionWidgetState extends State<QuesionWidget> {
               _questionNumber++;
             });
           } else {
+            final formatter = DateFormat("yyyy-MM-ddTHH:mm:ss");
             if (FirebaseAuth.instance.currentUser != null) {
               final Map<String, dynamic> datos = {
-                "date": DateFormat('yyyy/MM/dd').format(DateTime.now()),
+                "date": formatter.format(DateTime.now()),
                 "score": scoreQuestion.reduce((valorAnterior, valorActual) =>
                     valorAnterior + valorActual),
               };
               print('USUARIO: ${FirebaseAuth.instance.currentUser?.uid}');
               final String userId = FirebaseAuth.instance.currentUser!.uid;
-              final String fechaFormateada =
-                  DateFormat('yyyyMMddhhmmss').format(DateTime.now());
-              await db
-                  .collection("anxietytest")
-                  .doc(userId)
-                  .collection(fechaFormateada)
-                  .doc()
-                  .set(datos);
+
+              DocumentReference userRef =
+                  db.collection('anxietytest').doc(userId);
+              await userRef
+                  .collection('history').add(datos);
             }
             // ignore: use_build_context_synchronously
             Navigator.pushReplacement(
@@ -115,8 +113,9 @@ class _QuestionWidgetState extends State<QuesionWidget> {
                         )));
           }
         },
-        child:
-            Text(_questionNumber < anxietyQuestions.length ? 'Siguiente' : 'Enviar'));
+        child: Text(_questionNumber < anxietyQuestions.length
+            ? 'Siguiente'
+            : 'Enviar'));
   }
 
   Column buildQuestion(Question question) {
@@ -165,7 +164,7 @@ class ResultPage extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           const SizedBox(height: 10),
-          Text('Tu puntaje es: ${scoreTotal()}'),
+          Text(resultTest()),
           const SizedBox(height: 30),
           SizedBox(
             width: 310,
@@ -173,17 +172,7 @@ class ResultPage extends StatelessWidget {
               //onTap: signIn,
               child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const AnxietyView(),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) {
-                          return child;
-                        },
-                      ),
-                    );
+                    Navigator.pop(context);
                   },
                   child: const Text('Realizar otro test')),
             ),
@@ -194,17 +183,11 @@ class ResultPage extends StatelessWidget {
               //onTap: signIn,
               child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const ResultView(),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) {
-                          return child;
-                        },
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => const ResultView()),
+                    // );
                   },
                   child: const Text('Ver resultados')),
             ),
@@ -214,9 +197,20 @@ class ResultPage extends StatelessWidget {
     );
   }
 
-  scoreTotal() {
-    return scoreQuestion
+  String resultTest() {
+    String response = '';
+    var score = scoreQuestion
         .reduce((valorAnterior, valorActual) => valorAnterior + valorActual);
+    if (score >= 0 || score <= 4) {
+      response = 'No se aprecia ansiedad.';
+    } else if (score >= 5 || score <= 9) {
+      response = 'Se aprecian síntomas de ansiedad leves.';
+    } else if (score >= 10 || score <= 14) {
+      response = 'Se aprecian síntomas de ansiedad moderados.';
+    } else if (score >= 15 || score <= 21) {
+      response = 'Se aprecian síntomas de ansiedad severos.';
+    }
+    return response;
   }
 }
 
