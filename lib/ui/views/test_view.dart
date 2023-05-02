@@ -1,8 +1,6 @@
 import 'package:addmental/ui/views/tests/anxiety_view.dart';
 import 'package:addmental/ui/views/tests/depression_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 
 
 class TestView extends StatefulWidget {

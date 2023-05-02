@@ -1,6 +1,4 @@
 import 'package:addmental/model/question.dart';
-import 'package:addmental/ui/views/result_view.dart';
-import 'package:addmental/ui/views/test_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -89,22 +87,17 @@ class _QuestionWidgetState extends State<QuesionWidget> {
               _questionNumber++;
             });
           } else {
+            final formatter = DateFormat("yyyy-MM-ddTHH:mm:ss");
             if (FirebaseAuth.instance.currentUser != null) {
               final Map<String, dynamic> datos = {
-                "date": DateFormat('yyyy/MM/dd').format(DateTime.now()),
+                "date": formatter.format(DateTime.now()),
                 "score": scoreQuestion.reduce((valorAnterior, valorActual) =>
                     valorAnterior + valorActual),
               };
-              print('USUARIO: ${FirebaseAuth.instance.currentUser?.uid}');
               final String userId = FirebaseAuth.instance.currentUser!.uid;
-              final String fechaFormateada =
-                  DateFormat('yyyyMMddhhmmss').format(DateTime.now());
-              await db
-                  .collection("depressiontest")
-                  .doc(userId)
-                  .collection(fechaFormateada)
-                  .doc()
-                  .set(datos);
+              DocumentReference userRef =
+                  db.collection('depressiontest').doc(userId);
+              await userRef.collection('history').add(datos);
             }
             // ignore: use_build_context_synchronously
             Navigator.pushReplacement(
@@ -116,8 +109,9 @@ class _QuestionWidgetState extends State<QuesionWidget> {
                         )));
           }
         },
-        child:
-            Text(_questionNumber < depressionQuestions.length ? 'Siguiente' : 'Enviar'));
+        child: Text(_questionNumber < depressionQuestions.length
+            ? 'Siguiente'
+            : 'Enviar'));
   }
 
   Column buildQuestion(Question question) {
@@ -233,7 +227,6 @@ class OptionWidget extends StatelessWidget {
   Widget build(BuildContext context) => SingleChildScrollView(
         child: Column(
           children: question.options
-              //.map((option) => buildOption(context, option))
               .map((option) => RadioListTile<Option>(
                     title: Text(option.text),
                     value: option,

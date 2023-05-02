@@ -1,12 +1,8 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:intl/intl.dart';
 
 class ResultView extends StatefulWidget {
@@ -22,7 +18,6 @@ class _ResultViewState extends State<ResultView> {
   List<FlSpot> depressionData = [];
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getDataFromFirestore();
   }
@@ -34,25 +29,27 @@ class _ResultViewState extends State<ResultView> {
     setState(() {
       if (depressionResult.isNotEmpty) {
         for (var test in depressionResult) {
-          var yFormatted = test['date'].replaceAll('/', '-');
-          var date = DateTime.parse(yFormatted);
+          var date = DateTime.parse(test['date']);
           var yTimestamp = date.millisecondsSinceEpoch.toDouble();
-          depressionData.add(FlSpot(test['score'].toDouble(), yTimestamp));
-          //print('Score: ${test['score']}, Fecha: ${test['date']}');
+          depressionData.add(FlSpot(yTimestamp, test['score'].toDouble()));
         }
+        depressionData.sort((a, b) => a.x.compareTo(b.x));
       } else {
-        print('No existen datos.');
+        if (kDebugMode) {
+          print('No existen datos.');
+        }
       }
       if (anxietyResult.isNotEmpty) {
         for (var test in anxietyResult) {
-          var yFormatted = test['date'].replaceAll('/', '-');
-          var date = DateTime.parse(yFormatted);
+          var date = DateTime.parse(test['date']);
           var yTimestamp = date.millisecondsSinceEpoch.toDouble();
-          anxietyData.add(FlSpot(test['score'].toDouble(), yTimestamp));
-          //print('Score: ${test['score']}, Fecha: ${test['date']}');
+          anxietyData.add(FlSpot(yTimestamp, test['score'].toDouble()));
         }
+        anxietyData.sort((a, b) => a.x.compareTo(b.x));
       } else {
-        print('No existen datos.');
+        if (kDebugMode) {
+          print('No existen datos.');
+        }
       }
     });
   }
@@ -69,11 +66,11 @@ class _ResultViewState extends State<ResultView> {
           const SizedBox(height: 10),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
+            // ignore: unnecessary_null_comparison
             child: depressionData == null
                 ? const CircularProgressIndicator()
                 : depressionData.isEmpty
                     ? Container(
-                        //color: const Color.fromARGB(255, 230, 230, 230),
                         margin: const EdgeInsets.all(3),
                         width: 300,
                         padding: const EdgeInsets.all(16),
@@ -82,33 +79,32 @@ class _ResultViewState extends State<ResultView> {
                           image: AssetImage('assets/images/empty_data.jpg'),
                         ))
                     : Container(
-                        margin: const EdgeInsets.all(3),
-                        width: 450,
-                        padding: const EdgeInsets.all(16),
+                        width: 350,
+                        padding: const EdgeInsets.all(10),
                         height: MediaQuery.of(context).size.height * 0.4,
                         child: SizedBox(
-                          width: 400,
-                          height: 250,
                           child: LineChart(
                             LineChartData(
                               clipData: FlClipData.all(),
+                              minY: 0,
+                              maxY: 30,
+                              minX: depressionData
+                                  .reduce((value, element) =>
+                                      value.x < element.x ? value : element)
+                                  .x,
                               maxX: depressionData
                                   .reduce((value, element) =>
-                                      value.y > element.y ? value : element)
-                                  .y,
-                              maxY: 12,
-                              minX: 0,
-                              minY: 0,
+                                      value.x > element.x ? value : element)
+                                  .x,
                               lineBarsData: [
                                 LineChartBarData(
                                   spots: depressionData,
                                   isCurved: true,
-                                  barWidth: 5,
-                                  belowBarData: BarAreaData(
-                                    show: true,
-                                  ),
                                 )
                               ],
+                              gridData: FlGridData(
+                                show: true,
+                              ),
                               titlesData: FlTitlesData(
                                   rightTitles: AxisTitles(
                                       sideTitles:
@@ -118,12 +114,21 @@ class _ResultViewState extends State<ResultView> {
                                           SideTitles(showTitles: false)),
                                   bottomTitles: AxisTitles(
                                       sideTitles: SideTitles(
-                                    reservedSize: 18,
+                                    reservedSize: 30,
                                     showTitles: true,
                                     getTitlesWidget: (value, meta) {
-                                      print('??${value}');
-                                      return Text(DateFormat.MMMd()
-                                          .format(DateTime.now()));
+                                      DateTime baseDate = DateTime(1900, 1, 1);
+                                      DateTime myDate = baseDate.add(Duration(
+                                          milliseconds: value.toInt()));
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 5.0),
+                                        child: Transform.rotate(
+                                          angle: 35 * 3.1416 / 180,
+                                          child: Text(
+                                              DateFormat.Md().format(myDate)),
+                                        ),
+                                      );
                                     },
                                   ))),
                             ),
@@ -132,50 +137,48 @@ class _ResultViewState extends State<ResultView> {
                       ),
           ),
           const SizedBox(height: 10),
-          Text('Escala de Trastorno de Ansiedad Generalizada - 7'),
+          const Text('Escala de Trastorno de Ansiedad Generalizada - 7'),
           const SizedBox(height: 10),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
+            // ignore: unnecessary_null_comparison
             child: anxietyData == null
                 ? const CircularProgressIndicator()
                 : anxietyData.isEmpty
                     ? Container(
-                        //color: const Color.fromARGB(255, 230, 230, 230),
                         margin: const EdgeInsets.all(3),
-                        width: 300,
                         padding: const EdgeInsets.all(16),
                         height: MediaQuery.of(context).size.height * 0.4,
                         child: const Image(
                           image: AssetImage('assets/images/empty_data.jpg'),
                         ))
                     : Container(
-                        margin: const EdgeInsets.all(3),
-                        width: 450,
-                        padding: const EdgeInsets.all(16),
+                        width: 350,
+                        padding: const EdgeInsets.all(10),
                         height: MediaQuery.of(context).size.height * 0.4,
                         child: SizedBox(
-                          width: 400,
-                          height: 250,
                           child: LineChart(
                             LineChartData(
                               clipData: FlClipData.all(),
+                              minY: 0,
+                              maxY: 22,
+                              minX: anxietyData
+                                  .reduce((value, element) =>
+                                      value.x < element.x ? value : element)
+                                  .x,
                               maxX: anxietyData
                                   .reduce((value, element) =>
-                                      value.y > element.y ? value : element)
-                                  .y,
-                              maxY: 12,
-                              minX: 0,
-                              minY: 0,
+                                      value.x > element.x ? value : element)
+                                  .x,
                               lineBarsData: [
                                 LineChartBarData(
                                   spots: anxietyData,
                                   isCurved: true,
-                                  barWidth: 5,
-                                  belowBarData: BarAreaData(
-                                    show: true,
-                                  ),
                                 )
                               ],
+                              gridData: FlGridData(
+                                show: true,
+                              ),
                               titlesData: FlTitlesData(
                                   rightTitles: AxisTitles(
                                       sideTitles:
@@ -185,12 +188,21 @@ class _ResultViewState extends State<ResultView> {
                                           SideTitles(showTitles: false)),
                                   bottomTitles: AxisTitles(
                                       sideTitles: SideTitles(
-                                    reservedSize: 18,
+                                    reservedSize: 30,
                                     showTitles: true,
                                     getTitlesWidget: (value, meta) {
-                                      print('??${value}');
-                                      return Text(DateFormat.MMMd()
-                                          .format(DateTime.now()));
+                                      DateTime baseDate = DateTime(1900, 1, 1);
+                                      DateTime myDate = baseDate.add(Duration(
+                                          milliseconds: value.toInt()));
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 5.0),
+                                        child: Transform.rotate(
+                                          angle: 35 * 3.1416 / 180,
+                                          child: Text(
+                                              DateFormat.Md().format(myDate)),
+                                        ),
+                                      );
                                     },
                                   ))),
                             ),
@@ -211,13 +223,13 @@ class _ResultViewState extends State<ResultView> {
         .collection('history');
     QuerySnapshot querySnapshot = await anxxietyRef.get();
     List<Map<String, dynamic>> history = [];
-    querySnapshot.docs.forEach((response) {
+    for (var response in querySnapshot.docs) {
       Map<String, dynamic> data = response.data() as Map<String, dynamic>;
       history.add({
         'score': data['score'],
         'date': data['date'],
       });
-    });
+    }
     return history;
   }
 

@@ -1,5 +1,4 @@
 import 'package:addmental/model/question.dart';
-import 'package:addmental/ui/views/result_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +30,7 @@ class QuesionWidget extends StatefulWidget {
 
 class _QuestionWidgetState extends State<QuesionWidget> {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  late PageController _controller;  
+  late PageController _controller;
   int _questionNumber = 1;
   int _score = 0;
   List<int> scoreQuestion = [0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -95,13 +94,10 @@ class _QuestionWidgetState extends State<QuesionWidget> {
                 "score": scoreQuestion.reduce((valorAnterior, valorActual) =>
                     valorAnterior + valorActual),
               };
-              print('USUARIO: ${FirebaseAuth.instance.currentUser?.uid}');
               final String userId = FirebaseAuth.instance.currentUser!.uid;
-
               DocumentReference userRef =
                   db.collection('anxietytest').doc(userId);
-              await userRef
-                  .collection('history').add(datos);
+              await userRef.collection('history').add(datos);
             }
             // ignore: use_build_context_synchronously
             Navigator.pushReplacement(
@@ -169,7 +165,6 @@ class ResultPage extends StatelessWidget {
           SizedBox(
             width: 310,
             child: GestureDetector(
-              //onTap: signIn,
               child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
@@ -180,7 +175,6 @@ class ResultPage extends StatelessWidget {
           SizedBox(
             width: 310,
             child: GestureDetector(
-              //onTap: signIn,
               child: ElevatedButton(
                   onPressed: () {
                     // Navigator.push(
@@ -226,7 +220,6 @@ class OptionWidget extends StatelessWidget {
   Widget build(BuildContext context) => SingleChildScrollView(
         child: Column(
           children: question.options
-              //.map((option) => buildOption(context, option))
               .map((option) => RadioListTile<Option>(
                     title: Text(option.text),
                     value: option,

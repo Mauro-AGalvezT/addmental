@@ -62,7 +62,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20),
-            //email texfield
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: TextFormField(
@@ -78,10 +77,10 @@ class _LoginPageState extends State<LoginPage> {
                   return null;
                 },
                 decoration: InputDecoration(
-                    hintText: 'Email',
-                    hintStyle: const TextStyle(color: Colors.grey),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10))),
+                  labelText: 'Email',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -98,8 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                 },
                 obscureText: true,
                 decoration: InputDecoration(
-                    hintText: 'Contraseña',
-                    hintStyle: const TextStyle(color: Colors.grey),
+                    labelText: 'Contraseña',
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10))),
               ),
@@ -108,7 +106,6 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(
               width: 310,
               child: GestureDetector(
-                //onTap: signIn,
                 child: ElevatedButton(
                     onPressed: () {
                       if (!_formLoginKey.currentState!.validate()) {
@@ -117,15 +114,14 @@ class _LoginPageState extends State<LoginPage> {
                         signIn();
                       }
                     },
-                    child: const Text('Ingresar')),
+                    child: const Text('Ingresar',style: TextStyle(),)),
               ),
             ),
             TextButton(
               child: const Text(
                 'Registrate',
                 style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 16.0,
+                  fontSize: 14.0,
                 ),
               ),
               onPressed: () {

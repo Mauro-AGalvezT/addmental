@@ -1,9 +1,10 @@
 import 'package:addmental/ui/login_page.dart';
 import 'package:addmental/ui/main_page.dart';
+import 'package:addmental/ui/views/home_view.dart';
 import 'package:addmental/ui/views/result_view.dart';
-import 'package:addmental/ui/views/tests/anxiety_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'color_schemes.g.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -22,13 +23,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(useMaterial3: false, colorScheme: darkColorScheme),
       initialRoute: MainPage.id,
+      debugShowCheckedModeBanner: false,
       routes: {
         LoginPage.id: (_) => const LoginPage(),
         ResultView.id: (_) => const ResultView(),
+        HomeView.id: (_) => const HomeView(),
       },
       home: const MainPage(),
     );

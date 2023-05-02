@@ -1,7 +1,7 @@
 import 'package:addmental/ui/home_page.dart';
-import 'package:addmental/ui/login_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:addmental/model/user.dart';
@@ -53,8 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                   decoration: InputDecoration(
                       icon: const Icon(Icons.person_outline_sharp),
-                      hintText: 'Nombres',
-                      hintStyle: const TextStyle(color: Colors.grey),
+                      labelText: 'Nombres',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10))),
                 ),
@@ -69,8 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                   decoration: InputDecoration(
                       icon: const Icon(Icons.person_outline_sharp),
-                      hintText: 'Apellidos',
-                      hintStyle: const TextStyle(color: Colors.grey),
+                      labelText: 'Apellidos',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10))),
                 ),
@@ -85,8 +83,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   },
                   decoration: InputDecoration(
                       icon: const Icon(Icons.date_range),
-                      hintText: 'Fecha de nacimiento',
-                      hintStyle: const TextStyle(color: Colors.grey),
+                      labelText: 'Fecha de nacimiento',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10))),
                   onTap: () async {
@@ -188,7 +185,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                     ),
                     hintText: 'Contraseña',
-                    hintStyle: const TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10))),
               ),
@@ -220,11 +216,9 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text('Registrate'),
         centerTitle: true,
-        foregroundColor: Colors.black,
       ),
       body: Column(
         children: [
@@ -242,8 +236,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(width: 10),
                     TextButton(
                       onPressed: controlsDetails.onStepCancel,
-                      child: const Text('Cancelar',
-                          style: TextStyle(color: Colors.grey)),
+                      child: const Text('Cancelar'),
                     ),
                   ],
                 );
@@ -347,24 +340,28 @@ class _RegisterPageState extends State<RegisterPage> {
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
+        if (kDebugMode) {
+          print('The password provided is too weak.');
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('La contraseña es demasiada corta.'),
-            backgroundColor: Colors.red,
           ),
         );
       } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
+        if (kDebugMode) {
+          print('The account already exists for that email.');
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Ya existe una cuenta con ese correo.'),
-            backgroundColor: Colors.red,
           ),
         );
       }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -389,33 +386,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Container(
                       padding: const EdgeInsets.all(10.0),
                       child: const Text(
-                        ' Políticas de Privacidad de "ADDMENTAL"\n' +
-                            '1.	Introducción' +
-                            'Esta política de privacidad describe cómo la aplicación móvil " ADDMENTAL " recopila y utiliza la información personal de los usuarios de la aplicación. Al utilizar la aplicación, el usuario acepta las prácticas descritas en esta política de privacidad.' +
-                            '\n' +
-                            '2.	Información que recopilamos' +
-                            'La Aplicación puede recopilar información personal del usuario, incluyendo:\n' +
-                            '•	Información de contacto, como nombre y dirección de correo electrónico.\n' +
-                            '•	Información demográfica, como edad, género y ubicación geográfica.\n' +
-                            '•	Información de salud, como los síntomas de depresión y ansiedad que el usuario experimenta.\n' +
-                            '•	Además, la aplicación puede recopilar información no personal sobre el uso de la aplicación, incluyendo datos de uso, registros de errores y otros datos de diagnóstico. Esta información se utiliza para mejorar la calidad de la aplicación y el servicio que ofrecemos.' +
-                            '\n' +
-                            '3.	Uso de la información' +
-                            'La aplicación utiliza la información personal del usuario para los siguientes fines:\n' +
-                            '•	Proporcionar un diagnóstico de depresión y ansiedad.\n' +
-                            '•	Proporcionar información personalizada y consejos sobre la gestión de la depresión y ansiedad.\n' +
-                            '•	Mejorar la calidad de la Aplicación y el servicio que ofrecemos.\n' +
-                            '•	Enviar información sobre actualizaciones de la aplicación o nuevos servicios que puedan ser de interés para el usuario.\n' +
-                            '•	La aplicación no vende ni comparte la información personal del usuario con terceros sin el consentimiento explícito del usuario.' +
-                            '\n' +
-                            '4.	Seguridad de la información\n' +
-                            'La aplicación se compromete a proteger la información personal del usuario y utiliza medidas de seguridad razonables para proteger la información de accesos no autorizados o uso indebido. Sin embargo, ninguna medida de seguridad es completamente infalible y la aplicación no puede garantizar la seguridad completa de la información del usuario.' +
-                            '\n' +
-                            '5.	Cambios a esta política de privacidad\n' +
-                            'La aplicación puede actualizar esta política de privacidad de vez en cuando. En caso de cambios significativos en las prácticas de privacidad de la aplicación, se informará al usuario mediante una notificación dentro de la aplicación o mediante correo electrónico.' +
-                            '\n' +
-                            '6.	Contacto\n' +
-                            'Si el usuario tiene alguna pregunta o inquietud s0obre esta política de privacidad o el uso de la aplicación, puede ponerse en contacto con nosotros en cualquier momento mediante el correo electrónico proporcionado en la aplicación.',
+                        ' Políticas de Privacidad de "ADDMENTAL"\n1.	IntroducciónEsta política de privacidad describe cómo la aplicación móvil " ADDMENTAL " recopila y utiliza la información personal de los usuarios de la aplicación. Al utilizar la aplicación, el usuario acepta las prácticas descritas en esta política de privacidad.\n2.	Información que recopilamosLa Aplicación puede recopilar información personal del usuario, incluyendo:\n•	Información de contacto, como nombre y dirección de correo electrónico.\n•	Información demográfica, como edad, género y ubicación geográfica.\n•	Información de salud, como los síntomas de depresión y ansiedad que el usuario experimenta.\n•	Además, la aplicación puede recopilar información no personal sobre el uso de la aplicación, incluyendo datos de uso, registros de errores y otros datos de diagnóstico. Esta información se utiliza para mejorar la calidad de la aplicación y el servicio que ofrecemos.\n3.	Uso de la informaciónLa aplicación utiliza la información personal del usuario para los siguientes fines:\n•	Proporcionar un diagnóstico de depresión y ansiedad.\n•	Proporcionar información personalizada y consejos sobre la gestión de la depresión y ansiedad.\n•	Mejorar la calidad de la Aplicación y el servicio que ofrecemos.\n•	Enviar información sobre actualizaciones de la aplicación o nuevos servicios que puedan ser de interés para el usuario.\n•	La aplicación no vende ni comparte la información personal del usuario con terceros sin el consentimiento explícito del usuario.\n4.	Seguridad de la información\nLa aplicación se compromete a proteger la información personal del usuario y utiliza medidas de seguridad razonables para proteger la información de accesos no autorizados o uso indebido. Sin embargo, ninguna medida de seguridad es completamente infalible y la aplicación no puede garantizar la seguridad completa de la información del usuario.\n5.	Cambios a esta política de privacidad\nLa aplicación puede actualizar esta política de privacidad de vez en cuando. En caso de cambios significativos en las prácticas de privacidad de la aplicación, se informará al usuario mediante una notificación dentro de la aplicación o mediante correo electrónico.\n6.	Contacto\nSi el usuario tiene alguna pregunta o inquietud s0obre esta política de privacidad o el uso de la aplicación, puede ponerse en contacto con nosotros en cualquier momento mediante el correo electrónico proporcionado en la aplicación.',
                         textAlign: TextAlign.justify,
                         style: TextStyle(fontSize: 14),
                       ),
