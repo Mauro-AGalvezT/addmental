@@ -4,7 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../home_page.dart';
+
 class DepressionView extends StatefulWidget {
+  static String id = "depression_view";
   const DepressionView({super.key});
 
   @override
@@ -165,45 +168,60 @@ class ResultPage extends StatelessWidget {
           SizedBox(
             width: 310,
             child: GestureDetector(
-              //onTap: signIn,
               child: ElevatedButton(
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const DepressionView(),
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) {
-                          return child;
-                        },
+                      MaterialPageRoute(
+                        builder: (context) => const HomePage(),
                       ),
                     );
                   },
-                  child: const Text('Realizar otro test')),
+                  child: const Text('Salir')),
             ),
           ),
-          SizedBox(
-            width: 310,
-            child: GestureDetector(
-              //onTap: signIn,
-              child: ElevatedButton(
-                  onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   PageRouteBuilder(
-                    //     pageBuilder: (context, animation, secondaryAnimation) =>
-                    //         const ResultView(),
-                    //     transitionsBuilder:
-                    //         (context, animation, secondaryAnimation, child) {
-                    //       return child;
-                    //     },
-                    //   ),
-                    // );
-                  },
-                  child: const Text('Ver resultados')),
-            ),
-          ),
+          // SizedBox(
+          //   width: 310,
+          //   child: GestureDetector(
+          //     //onTap: signIn,
+          //     child: ElevatedButton(
+          //         onPressed: () {
+          //           Navigator.pushReplacement(
+          //             context,
+          //             PageRouteBuilder(
+          //               pageBuilder: (context, animation, secondaryAnimation) =>
+          //                   const DepressionView(),
+          //               transitionsBuilder:
+          //                   (context, animation, secondaryAnimation, child) {
+          //                 return child;
+          //               },
+          //             ),
+          //           );
+          //         },
+          //         child: const Text('Realizar otro test')),
+          //   ),
+          // ),
+          // SizedBox(
+          //   width: 310,
+          //   child: GestureDetector(
+          //     //onTap: signIn,
+          //     child: ElevatedButton(
+          //         onPressed: () {
+          //           // Navigator.push(
+          //           //   context,
+          //           //   PageRouteBuilder(
+          //           //     pageBuilder: (context, animation, secondaryAnimation) =>
+          //           //         const ResultView(),
+          //           //     transitionsBuilder:
+          //           //         (context, animation, secondaryAnimation, child) {
+          //           //       return child;
+          //           //     },
+          //           //   ),
+          //           // );
+          //         },
+          //         child: const Text('Ver resultados')),
+          //   ),
+          // ),
         ],
       )),
     );
@@ -245,9 +263,7 @@ class OptionWidget extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey)),
+            borderRadius: BorderRadius.circular(16),),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

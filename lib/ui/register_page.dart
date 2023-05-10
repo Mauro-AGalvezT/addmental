@@ -15,7 +15,6 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  //final Usuario _user = Usuario();
   final _formStepOneKey = GlobalKey<FormState>();
   final _formStepTwoKey = GlobalKey<FormState>();
   final _formStepThreeKey = GlobalKey<FormState>();

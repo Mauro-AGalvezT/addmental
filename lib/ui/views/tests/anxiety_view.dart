@@ -1,10 +1,12 @@
 import 'package:addmental/model/question.dart';
+import 'package:addmental/ui/home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class AnxietyView extends StatefulWidget {
+  static String id = "anxiety_view";
   const AnxietyView({super.key});
 
   @override
@@ -34,11 +36,15 @@ class _QuestionWidgetState extends State<QuesionWidget> {
   int _questionNumber = 1;
   int _score = 0;
   List<int> scoreQuestion = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  static List<Question> _cleanQuestions = anxietyQuestions;
 
   @override
   void initState() {
     super.initState();
+    _questionNumber = 1;
+    scoreQuestion = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     _controller = PageController(initialPage: 0);
+    _cleanQuestions = List.from(_cleanQuestions);
   }
 
   @override
@@ -51,18 +57,17 @@ class _QuestionWidgetState extends State<QuesionWidget> {
           const SizedBox(
             height: 32,
           ),
-          Text('Pregunta $_questionNumber/${anxietyQuestions.length}'),
+          Text('Pregunta $_questionNumber/${_cleanQuestions.length}'),
           const Divider(
             thickness: 1,
-            color: Colors.grey,
           ),
           Expanded(
               child: PageView.builder(
-            itemCount: anxietyQuestions.length,
+            itemCount: _cleanQuestions.length,
             controller: _controller,
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
-              final question = anxietyQuestions[index];
+              final question = _cleanQuestions[index];
               return buildQuestion(question);
             },
           )),
@@ -78,7 +83,7 @@ class _QuestionWidgetState extends State<QuesionWidget> {
   ElevatedButton buildElevatenButton() {
     return ElevatedButton(
         onPressed: () async {
-          if (_questionNumber < anxietyQuestions.length) {
+          if (_questionNumber < _cleanQuestions.length) {
             _controller.nextPage(
               duration: const Duration(milliseconds: 250),
               curve: Curves.easeInExpo,
@@ -109,9 +114,8 @@ class _QuestionWidgetState extends State<QuesionWidget> {
                         )));
           }
         },
-        child: Text(_questionNumber < anxietyQuestions.length
-            ? 'Siguiente'
-            : 'Enviar'));
+        child: Text(
+            _questionNumber < _cleanQuestions.length ? 'Siguiente' : 'Enviar'));
   }
 
   Column buildQuestion(Question question) {
@@ -167,25 +171,29 @@ class ResultPage extends StatelessWidget {
             child: GestureDetector(
               child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomePage(),
+                      ),
+                    );
                   },
-                  child: const Text('Realizar otro test')),
+                  child: const Text('Salir')),
             ),
           ),
-          SizedBox(
-            width: 310,
-            child: GestureDetector(
-              child: ElevatedButton(
-                  onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //       builder: (context) => const ResultView()),
-                    // );
-                  },
-                  child: const Text('Ver resultados')),
-            ),
-          ),
+          // SizedBox(
+          //   width: 310,
+          //   child: GestureDetector(
+          //     child: ElevatedButton(
+          //         onPressed: () {
+          //           Navigator.of(context).pushNamedAndRemoveUntil(
+          //             ResultView.id,
+          //             ModalRoute.withName(HomeView.id),
+          //           );
+          //         },
+          //         child: const Text('Ver resultados')),
+          //   ),
+          // ),
         ],
       )),
     );
@@ -195,13 +203,13 @@ class ResultPage extends StatelessWidget {
     String response = '';
     var score = scoreQuestion
         .reduce((valorAnterior, valorActual) => valorAnterior + valorActual);
-    if (score >= 0 || score <= 4) {
+    if (score >= 0 && score <= 4) {
       response = 'No se aprecia ansiedad.';
-    } else if (score >= 5 || score <= 9) {
+    } else if (score >= 5 && score <= 9) {
       response = 'Se aprecian síntomas de ansiedad leves.';
-    } else if (score >= 10 || score <= 14) {
+    } else if (score >= 10 && score <= 14) {
       response = 'Se aprecian síntomas de ansiedad moderados.';
-    } else if (score >= 15 || score <= 21) {
+    } else if (score >= 15 && score <= 21) {
       response = 'Se aprecian síntomas de ansiedad severos.';
     }
     return response;
@@ -215,6 +223,7 @@ class OptionWidget extends StatelessWidget {
   const OptionWidget(
       {Key? key, required this.question, required this.onClikedOption})
       : super(key: key);
+
 
   @override
   Widget build(BuildContext context) => SingleChildScrollView(
@@ -238,9 +247,8 @@ class OptionWidget extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey)),
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

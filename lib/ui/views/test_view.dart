@@ -2,8 +2,8 @@ import 'package:addmental/ui/views/tests/anxiety_view.dart';
 import 'package:addmental/ui/views/tests/depression_view.dart';
 import 'package:flutter/material.dart';
 
-
 class TestView extends StatefulWidget {
+  static String id = "test_view";
   const TestView({super.key});
 
   @override
@@ -26,7 +26,7 @@ class _TestViewState extends State<TestView> {
               )),
           const SizedBox(height: 20),
           Container(
-              padding: EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
                   const Text(
@@ -39,12 +39,11 @@ class _TestViewState extends State<TestView> {
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
                             spreadRadius: 5,
                             blurRadius: 7,
-                            offset: const Offset(0, 3),
+                            offset: Offset(0, 3),
                           ),
                         ],
                       ),
@@ -55,7 +54,9 @@ class _TestViewState extends State<TestView> {
                             PageRouteBuilder(
                               pageBuilder:
                                   (context, animation, secondaryAnimation) =>
-                                      DepressionView(),
+                                      DepressionView(
+                                key: UniqueKey(),
+                              ),
                               transitionsBuilder: (context, animation,
                                   secondaryAnimation, child) {
                                 return child;
@@ -64,7 +65,7 @@ class _TestViewState extends State<TestView> {
                           );
                         },
                         child: Image.asset(
-                          'assets/images/image3.jpg',
+                          'assets/images/depresion.png',
                           width: 180,
                           height: 180,
                           fit: BoxFit.cover,
@@ -83,12 +84,11 @@ class _TestViewState extends State<TestView> {
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
                             spreadRadius: 5,
                             blurRadius: 7,
-                            offset: const Offset(0, 3),
+                            offset: Offset(0, 3),
                           ),
                         ],
                       ),
@@ -99,7 +99,9 @@ class _TestViewState extends State<TestView> {
                             PageRouteBuilder(
                               pageBuilder:
                                   (context, animation, secondaryAnimation) =>
-                                       AnxietyView(),
+                                      AnxietyView(
+                                key: UniqueKey(),
+                              ),
                               transitionsBuilder: (context, animation,
                                   secondaryAnimation, child) {
                                 return child;
@@ -108,7 +110,7 @@ class _TestViewState extends State<TestView> {
                           );
                         },
                         child: Image.asset(
-                          'assets/images/image4.jpg',
+                          'assets/images/Ansiedad.png',
                           width: 230,
                           height: 170,
                           fit: BoxFit.cover,
