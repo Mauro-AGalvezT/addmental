@@ -1,16 +1,17 @@
+import 'package:addmental/services/firebase_service.dart';
 import 'package:addmental/ui/login_page.dart';
 import 'package:addmental/ui/main_page.dart';
 import 'package:addmental/ui/views/home_view.dart';
 import 'package:addmental/ui/views/result_view.dart';
 import 'package:addmental/ui/views/results/result_prediction_view.dart';
-import 'package:addmental/ui/views/results/result_test_view.dart';
 import 'package:addmental/ui/views/test_view.dart';
 import 'package:addmental/ui/views/tests/anxiety_view.dart';
 import 'package:addmental/ui/views/tests/depression_view.dart';
+import 'package:addmental/services/location_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'color_schemes.g.dart';
-import 'firebase_options.dart';
+import 'util/color_schemes.g.dart';
+import 'config/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +19,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
+  LocationService.init();
 }
 
 class MyApp extends StatelessWidget {

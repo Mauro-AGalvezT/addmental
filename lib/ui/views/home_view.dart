@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../color_schemes.g.dart';
+import '../../util/color_schemes.g.dart';
 
 class HomeView extends StatefulWidget {
   static String id = "home_view";
