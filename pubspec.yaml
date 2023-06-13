@@ -42,8 +42,9 @@ dependencies:
   flutter_survey: '^0.1.4'
   intl: ^0.17.0
   fl_chart: ^0.62.0
-  background_fetch: ^1.0.0
   geolocator: ^8.0.0
+  background_locator_2: ^2.0.6
+  permission_handler: ^10.0.0
 
 dev_dependencies:
   flutter_test:

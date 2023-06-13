@@ -12,14 +12,26 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'util/color_schemes.g.dart';
 import 'config/firebase_options.dart';
+import 'dart:isolate';
+import 'dart:ui';
+import 'package:background_locator_2/background_locator.dart';
+
+const String _isolateName = "LocatorIsolate";
+ReceivePort port = ReceivePort();
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
-  LocationService.init();
+  IsolateNameServer.registerPortWithName(port.sendPort, _isolateName);
+  port.listen((dynamic data) {
+    // Realiza alguna acción con los datos recibidos
+    print('Datos de ubicación: $data');
+  });
+  BackgroundLocator.initialize();
 }
 
 class MyApp extends StatelessWidget {
