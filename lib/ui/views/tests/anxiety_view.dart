@@ -204,13 +204,13 @@ class ResultPage extends StatelessWidget {
     var score = scoreQuestion
         .reduce((valorAnterior, valorActual) => valorAnterior + valorActual);
     if (score >= 0 && score <= 4) {
-      response = 'No se aprecia ansiedad.';
+      response = 'Ausencia de ansiedad o síntomas minimos';
     } else if (score >= 5 && score <= 9) {
-      response = 'Se aprecian síntomas de ansiedad leves.';
+      response = 'Ansiedad leve';
     } else if (score >= 10 && score <= 14) {
-      response = 'Se aprecian síntomas de ansiedad moderados.';
+      response = 'Ansiedad moderada';
     } else if (score >= 15 && score <= 21) {
-      response = 'Se aprecian síntomas de ansiedad severos.';
+      response = 'Ansiedad severa';
     }
     return response;
   }

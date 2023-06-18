@@ -30,7 +30,7 @@ class _TestViewState extends State<TestView> {
               child: Column(
                 children: [
                   const Text(
-                    'Test de Depresión\n Inventario de Depresión de Beck-II',
+                    'Test de Depresión\n Cuestionario sobre la salud del paciente -9',
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),

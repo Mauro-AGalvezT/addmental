@@ -111,6 +111,33 @@ class _ResultPredictionViewState extends State<ResultPredictionView> {
                           ),
                         ],
                       ),
+                      BarChartGroupData(
+                        x: 4,
+                        barRods: [
+                          BarChartRodData(
+                            color: Colors.blue,
+                            toY: 2,
+                          ),
+                        ],
+                      ),
+                      BarChartGroupData(
+                        x: 5,
+                        barRods: [
+                          BarChartRodData(
+                            color: Colors.blue,
+                            toY: 2,
+                          ),
+                        ],
+                      ),
+                      BarChartGroupData(
+                        x: 6,
+                        barRods: [
+                          BarChartRodData(
+                            color: Colors.blue,
+                            toY: 2,
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),

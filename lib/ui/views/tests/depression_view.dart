@@ -163,7 +163,7 @@ class ResultPage extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           const SizedBox(height: 10),
-          Text('Tu puntaje es: ${scoreTotal()}'),
+          Text(resultTest()),
           const SizedBox(height: 30),
           SizedBox(
             width: 310,
@@ -225,12 +225,25 @@ class ResultPage extends StatelessWidget {
         ],
       )),
     );
+  }String resultTest() {
+    String response = '';
+    var score = scoreQuestion
+        .reduce((valorAnterior, valorActual) => valorAnterior + valorActual);
+    if (score >= 0 && score <= 4) {
+      response = 'Ausencia de depresión o síntomas minimos.';
+    } else if (score >= 5 && score <= 9) {
+      response = 'Depresión leve';
+    } else if (score >= 10 && score <= 14) {
+      response = 'Depresión moderada';
+    } else if (score >= 15 && score <= 19) {
+      response = 'Depresión moderadamente grave';
+    } else if (score >= 20 && score <= 27) {
+      response = 'Depresión grave';
+    }
+    return response;
   }
 
-  scoreTotal() {
-    return scoreQuestion
-        .reduce((valorAnterior, valorActual) => valorAnterior + valorActual);
-  }
+
 }
 
 class OptionWidget extends StatelessWidget {

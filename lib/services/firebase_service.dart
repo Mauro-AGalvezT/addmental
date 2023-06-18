@@ -9,10 +9,9 @@ class FirebaseService {
   }
 
   Future<void> insertData(String collectionName, Map<String, dynamic> data) async {
-    final CollectionReference collection = FirebaseFirestore.instance.collection(collectionName);
-
+    final FirebaseFirestore db = FirebaseFirestore.instance;
     try {
-      await collection.add(data);
+      await db.collection(collectionName).add(data);
       print('Datos insertados correctamente en la colección "$collectionName" de Firestore');
     } catch (e) {
       print('Error al insertar datos en Firestore: $e');
@@ -21,13 +20,29 @@ class FirebaseService {
   }
 
   Future<List<Map<String, dynamic>>> getData(String collectionName) async {
-    final CollectionReference collection = FirebaseFirestore.instance.collection(collectionName);
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+    User? currentUser = await getCurrentUser();
 
     try {
-      final snapshot = await collection.get();
+      final DateTime now = DateTime.now();
+      final DateTime yesterday = DateTime(now.year, now.month, now.day - 1);
+
+      final DateTime yesterdayStart = DateTime(yesterday.year, yesterday.month, yesterday.day, 0, 0, 0);
+      final DateTime yesterdayEnd = DateTime(yesterday.year, yesterday.month, yesterday.day, 23, 59, 59);
+
+      final double startTimestamp = yesterdayStart.millisecondsSinceEpoch.toDouble();
+      final double endTimestamp = yesterdayEnd.millisecondsSinceEpoch.toDouble();
+
+      final querySnapshot = await db
+          .collection(collectionName)
+          .where('email', isEqualTo: currentUser?.email)
+          .where('time', isGreaterThanOrEqualTo: startTimestamp)
+          .where('time', isLessThanOrEqualTo: endTimestamp)
+          .get();
+      print('Documentos encontrados: ${querySnapshot.size}');
       final List<Map<String, dynamic>> dataList = [];
 
-      snapshot.docs.forEach((QueryDocumentSnapshot doc) {
+      querySnapshot.docs.forEach((QueryDocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
         dataList.add(data);
       });

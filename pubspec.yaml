@@ -43,7 +43,10 @@ dependencies:
   intl: ^0.17.0
   fl_chart: ^0.62.0
   background_fetch: ^1.0.0
-  geolocator: ^8.0.0
+  geolocator: ^7.7.0
+  location: ^4.2.0
+
+
 
 dev_dependencies:
   flutter_test:

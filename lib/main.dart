@@ -7,7 +7,6 @@ import 'package:addmental/ui/views/results/result_prediction_view.dart';
 import 'package:addmental/ui/views/test_view.dart';
 import 'package:addmental/ui/views/tests/anxiety_view.dart';
 import 'package:addmental/ui/views/tests/depression_view.dart';
-import 'package:addmental/services/location_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'util/color_schemes.g.dart';
@@ -19,7 +18,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
-  LocationService.init();
+
 }
 
 class MyApp extends StatelessWidget {
