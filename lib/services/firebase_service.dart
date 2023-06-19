@@ -53,4 +53,57 @@ class FirebaseService {
       throw Exception('Error al obtener datos de Firestore');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getLastSevenDaysPrediction(String collectionName) async {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+    User? currentUser = await getCurrentUser();
+
+    try {
+      final DateTime now = DateTime.now();
+      final DateTime endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
+      final DateTime startDate = endDate.subtract(const Duration(days: 7));
+
+      final int startTimestamp = startDate.millisecondsSinceEpoch;
+      final int endTimestamp = endDate.millisecondsSinceEpoch;
+
+      final querySnapshot = await db
+          .collection(collectionName)
+          .where('email', isEqualTo: currentUser?.email)
+          .where('time', isGreaterThanOrEqualTo: startTimestamp)
+          .where('time', isLessThanOrEqualTo: endTimestamp)
+          .orderBy('time')
+          .get();
+      print('Documentos encontrados: ${querySnapshot.size}');
+      final List<Map<String, dynamic>> dataList = [];
+
+      // Agrupar los documentos por día
+      final Map<DateTime, List<QueryDocumentSnapshot>> groupedData = {};
+
+      querySnapshot.docs.forEach((QueryDocumentSnapshot doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        final int timestamp = data['time'] as int;
+        final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+        final DateTime date = DateTime(dateTime.year, dateTime.month, dateTime.day);
+
+        if (!groupedData.containsKey(date)) {
+          groupedData[date] = [];
+        }
+
+        groupedData[date]!.add(doc);
+      });
+
+      // Obtener el último registro de cada día
+      groupedData.forEach((date, docs) {
+        final QueryDocumentSnapshot lastDoc = docs.last;
+        final data = lastDoc.data() as Map<String, dynamic>;
+        dataList.add(data);
+      });
+
+      return dataList;
+    } catch (e) {
+      print('Error al obtener datos de Firestore: $e');
+      throw Exception('Error al obtener datos de Firestore');
+    }
+  }
 }
