@@ -19,7 +19,29 @@ class FirebaseService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getData(String collectionName) async {
+  Future<double> getLastScoreData(String collectionName) async {
+    final FirebaseFirestore db = FirebaseFirestore.instance;
+    final String userId = FirebaseAuth.instance.currentUser!.uid;
+    try {
+
+      final querySnapshot = await db
+          .collection(collectionName)
+          .doc(userId)
+          .collection('history')
+          .orderBy('date', descending: true)
+          .limit(1)
+          .get();
+
+      final doc = querySnapshot.docs.first;
+      final data = doc.data();
+      return data['score'].toDouble();
+    } catch (e) {
+      print('Error al obtener ultimo score de $collectionName: $e');
+      throw Exception('Error al obtener ultimo score de $collectionName');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getLastDayData(String collectionName) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     User? currentUser = await getCurrentUser();
 

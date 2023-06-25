@@ -1,4 +1,4 @@
-import 'package:addmental/services/firebase_service.dart';
+import 'package:addmental/services/location_service.dart';
 import 'package:addmental/ui/login_page.dart';
 import 'package:addmental/ui/main_page.dart';
 import 'package:addmental/ui/views/home_view.dart';
@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    LocationService.init();
     return MaterialApp(
       title: 'AddMental',
       theme: ThemeData(useMaterial3: false, colorScheme: darkColorScheme),

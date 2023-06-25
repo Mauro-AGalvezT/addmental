@@ -1,3 +1,4 @@
+import 'package:addmental/services/prediction_service.dart';
 import 'package:addmental/ui/views/results/result_prediction_view.dart';
 import 'package:addmental/ui/views/results/result_test_view.dart';
 import 'package:addmental/ui/views/tests/anxiety_view.dart';
@@ -7,14 +8,17 @@ import 'package:flutter/material.dart';
 class ResultView extends StatefulWidget {
   static String id = "result_view";
   const ResultView({super.key});
-
   @override
   State<ResultView> createState() => _ResultViewState();
 }
 
 class _ResultViewState extends State<ResultView> {
+
   @override
   Widget build(BuildContext context) {
+    PredictionService predictionService = PredictionService();
+    predictionService.predictDepression();
+    predictionService.predictAnxiety();
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,

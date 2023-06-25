@@ -84,3 +84,7 @@ double calculateAverageSpeed(List<double> speeds) {
   double averageSpeed = sum / speeds.length;
   return averageSpeed;
 }
+
+double calculateMovementTime(double totalDistance, double averageSpeed, double variance){
+  return totalDistance*0.1;
+}

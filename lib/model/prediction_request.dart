@@ -1,9 +1,9 @@
 class PredictionRequest {
-  final String variance;
-  final String totalDistance;
-  final String movementTime;
-  final String averageSpeed;
-  final String testScore;
+  String variance;
+  String totalDistance;
+  String movementTime;
+  String averageSpeed;
+  String testScore;
 
   PredictionRequest({
     required this.variance,

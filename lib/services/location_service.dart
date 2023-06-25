@@ -8,7 +8,6 @@ import 'package:location/location.dart';
 class LocationService {
   static Future<void> init() async {
     await getLocationInBackground();
-    List<UserLocation> userLocation = await getLastDayUserLocations();
     BackgroundFetch.configure(
       BackgroundFetchConfig(
         minimumFetchInterval: 15, // Intervalo de tiempo en segundos
@@ -89,7 +88,7 @@ class LocationService {
       List<UserLocation> userLocationList = [];
 
       // Obtener datos de ubicación desde Firebase
-      dataList = await firebaseService.getData('locations');
+      dataList = await firebaseService.getLastDayData('locations');
 
       // Procesar los datos de ubicación
       for (Map<String, dynamic> data in dataList) {
