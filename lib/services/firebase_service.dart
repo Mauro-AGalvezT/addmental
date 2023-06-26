@@ -93,7 +93,7 @@ class FirebaseService {
           .where('email', isEqualTo: currentUser?.email)
           .where('time', isGreaterThanOrEqualTo: startTimestamp)
           .where('time', isLessThanOrEqualTo: endTimestamp)
-          .orderBy('time')
+          .orderBy('time', descending: true)
           .get();
       print('Documentos encontrados: ${querySnapshot.size}');
       final List<Map<String, dynamic>> dataList = [];
@@ -103,8 +103,8 @@ class FirebaseService {
 
       querySnapshot.docs.forEach((QueryDocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
-        final int timestamp = data['time'] as int;
-        final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+        final int timestamp = data['time'];
+        final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp.toInt());
 
         final DateTime date = DateTime(dateTime.year, dateTime.month, dateTime.day);
 

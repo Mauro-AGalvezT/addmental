@@ -27,6 +27,7 @@ class PredictionService {
       final jsonBody = json.decode(response.body) as Map<String, dynamic>;
       PredictionResponse predictionResponse = PredictionResponse.fromJson(jsonBody);
       final DateTime now = DateTime.now();
+      int time = now.millisecondsSinceEpoch.toInt();
       await firebaseService.insertData('predictions', {
         'variance': predictionResponse.variance,
         'totalDistance': predictionResponse.totalDistance,
@@ -35,7 +36,7 @@ class PredictionService {
         'testScore': predictionResponse.testScore,
         'email': currentUser?.email,
         'result': predictionResponse.result == 'Si'? 1 : 0,
-        'time': now.millisecondsSinceEpoch.toInt()
+        'time': time
       });
       print('Predicción de depresión registrada correctamente');
       return predictionResponse;
